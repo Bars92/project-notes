@@ -4,6 +4,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import styles from './styles';
 import { firebase } from '../../firebase/config'
 
+const provider = new firebase.auth.GithubAuthProvider();
+
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -12,12 +14,21 @@ export default function LoginScreen({navigation}) {
         navigation.navigate('Registration')
     }
 
+    const onLoginGithubPress = () => {
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            const user = result.user;
+            navigation.navigate('Home', {user})
+          }).catch((error) => {
+              alert(error)
+          });
+    };
+
     const onLoginPress = () => {
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then((response) => {
-                const uid = response.user.uid
+                const uid = response.user?.uid
                 const usersRef = firebase.firestore().collection('users')
                 usersRef
                     .doc(uid)
@@ -71,6 +82,11 @@ export default function LoginScreen({navigation}) {
                     style={styles.button}
                     onPress={() => onLoginPress()}>
                     <Text style={styles.buttonTitle}>Log in</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => onLoginGithubPress()}>
+                    <Text style={styles.buttonTitle}>Log in with Github</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>

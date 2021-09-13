@@ -1,20 +1,17 @@
-import * as firebase from 'firebase';
-import '@firebase/auth';
-import '@firebase/firestore';
+import 'firebase/auth';
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "",
-    authDomain: "",
-    databaseURL: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
+    apiKey: "AIzaSyADvxp1Q45tIRuOopEKL236kRk58RcN4IE",
+    authDomain: "keepers-bar.firebaseapp.com",
+    databaseURL: "https://keepers-bar.firebaseio.com",
+    projectId: "keepers-bar",
+    storageBucket: "keepers-bar.appspot.com",
+    messagingSenderId: "969658710393",
+    appId: "1:969658710393:web:c488c1fa0fe19f3f83d7a8",
     measurementId: ""
 };
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+const app = firebase.initializeApp(firebaseConfig);
 
 export { firebase };

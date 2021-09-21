@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { NavigationProp, ParamListBase } from '@react-navigation/native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { firebase } from '../../firebase/config'
 
-export default function RegistrationScreen({navigation}) {
+interface IRegistrationScreenProps {
+    navigation: NavigationProp<ParamListBase>
+};
+
+export default function RegistrationScreen({navigation} : IRegistrationScreenProps) {
     const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -23,7 +28,7 @@ export default function RegistrationScreen({navigation}) {
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then((response) => {
-                const uid = response.user.uid
+                const uid = response.user?.uid
                 const data = {
                     id: uid,
                     email,
@@ -92,11 +97,10 @@ export default function RegistrationScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
-                </TouchableOpacity>
+                <Button
+                    onPress={() => onRegisterPress()}
+                    title="Create account"
+                />
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>

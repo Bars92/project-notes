@@ -2,14 +2,27 @@ import React, { useEffect, useState } from 'react'
 import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import styles from './styles';
 import { firebase } from '../../firebase/config'
+import { NavigationProp, ParamListBase } from '@react-navigation/native'
 
-export default function HomeScreen(props) {
+interface IHomeScreenProps {
+    user: any;
+    navigation: NavigationProp<ParamListBase>;
+};
+
+class Entry {
+    id!: string
+    text!: string;
+    authorID?: string
+    createdAt?: firebase.firestore.Timestamp
+}
+
+export default function HomeScreen({ user, navigation } : IHomeScreenProps) {
 
     const [entityText, setEntityText] = useState('')
-    const [entities, setEntities] = useState([])
+    const [entities, setEntities] = useState<Array<Entry>>([])
 
     const entityRef = firebase.firestore().collection('entities')
-    const userID = props.extraData.id
+    const userID = user?.uid
 
     useEffect(() => {
         entityRef
@@ -17,11 +30,11 @@ export default function HomeScreen(props) {
             .orderBy('createdAt', 'desc')
             .onSnapshot(
                 querySnapshot => {
-                    const newEntities = []
+                    const newEntities : Array<Entry> = []
                     querySnapshot.forEach(doc => {
                         const entity = doc.data()
                         entity.id = doc.id
-                        newEntities.push(entity)
+                        newEntities.push(entity as Entry)
                     });
                     setEntities(newEntities)
                 },
@@ -29,7 +42,7 @@ export default function HomeScreen(props) {
                     console.log(error)
                 }
             )
-    }, [])
+    }, [userID])
 
     const onAddButtonPress = () => {
         if (entityText && entityText.length > 0) {
@@ -51,6 +64,15 @@ export default function HomeScreen(props) {
         }
     }
 
+    const onLogoutPress = () => {
+        firebase.auth().signOut().then(() => {
+            navigation.navigate('Login')
+            alert('You have logged out');
+        }).catch((error) => {
+            console.log('error: ' + error);
+        })
+    }
+
     const renderEntity = ({item, index}) => {
         return (
             <View style={styles.entityContainer}>
@@ -63,6 +85,9 @@ export default function HomeScreen(props) {
 
     return (
         <View style={styles.container}>
+        <TouchableOpacity style={styles.button} onPress={onLogoutPress}>
+            <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
             <View style={styles.formContainer}>
                 <TextInput
                     style={styles.input}

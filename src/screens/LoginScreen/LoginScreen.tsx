@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import styles from './styles';
+import { Button, Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import styles from './styles'
 import { firebase } from '../../firebase/config'
+import { NavigationProp, ParamListBase } from '@react-navigation/native'
 
-const provider = new firebase.auth.GithubAuthProvider();
+const githubProvider = new firebase.auth.GithubAuthProvider();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-export default function LoginScreen({navigation}) {
+
+interface ILoginScreenProps {
+    navigation: NavigationProp<ParamListBase>
+};
+
+export default function LoginScreen({ navigation } : ILoginScreenProps) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -14,10 +21,17 @@ export default function LoginScreen({navigation}) {
         navigation.navigate('Registration')
     }
 
+    const onLoginGooglePress = () => {
+        firebase.auth().signInWithPopup(googleProvider).then((result) => {
+            navigation.navigate('Home', {user: result.user})
+          }).catch((error) => {
+              alert(error)
+          });
+    };
+
     const onLoginGithubPress = () => {
-        firebase.auth().signInWithPopup(provider).then((result) => {
-            const user = result.user;
-            navigation.navigate('Home', {user})
+        firebase.auth().signInWithPopup(githubProvider).then((result) => {
+            navigation.navigate('Home', {user: result.user})
           }).catch((error) => {
               alert(error)
           });
@@ -78,16 +92,18 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => onLoginGithubPress()}>
-                    <Text style={styles.buttonTitle}>Log in with Github</Text>
-                </TouchableOpacity>
+                <Button
+                    onPress={() => onLoginPress()}
+                    title={'Log in'}
+                />
+                <Button
+                    onPress={() => onLoginGithubPress()}
+                    title="Log in with Github"
+                />
+                <Button
+                    onPress={() => onLoginGooglePress()}
+                    title="Log in with Google"
+                />
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
                 </View>

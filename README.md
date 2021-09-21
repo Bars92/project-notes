@@ -8,8 +8,9 @@ ToDoList using React Native, Expo, Typescript, Firebase, Firebase Auth
 
 ## To-dos
 - [ ] add test framework, test specs and CI
-- [ ] add auth handlers and login options
+- [x] add auth handlers and login options
 - [ ] add UI library material UI
 - [ ] add note fields and note modal
 - [ ] add common types and consts
 - [ ] add note types
+- [ ] add pinned and categories
